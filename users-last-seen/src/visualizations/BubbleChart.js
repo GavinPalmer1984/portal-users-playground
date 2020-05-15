@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
-import { pack, sum } from 'd3';
+import { pack } from 'd3';
 
 const width = 650;
 const height = 400;
@@ -19,9 +19,10 @@ class BubbleChart extends Component {
         const fn = pack(nodes).size([width, height]);
         const circles = fn(nodes).children.map((circle) => {
             let fill = '#17becf';
+            let text = <text textAnchor="middle"><tspan y="0.3em" fontSize="10px">{circle.data.username[0]}</tspan></text>;
             if (circle.data.pic) {
-                // fill = `url('${circle.data.pic}')`;
                 fill = `url(#${circle.data.id})`;
+                text = '';
             }
             return {
                 id: circle.data.id,
@@ -29,7 +30,8 @@ class BubbleChart extends Component {
                 y: circle.y,
                 r: circle.r,
                 fill: fill,
-                pic: circle.data.pic
+                pic: circle.data.pic,
+                text
             };
         });
 
@@ -52,6 +54,7 @@ class BubbleChart extends Component {
                                 </pattern>
                             </defs>
                             <circle id={i} r={circle.r} fillOpacity={0.7} fill={circle.fill}></circle>
+                            {circle.text}
                         </g>
                     )
                 )}

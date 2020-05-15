@@ -38,7 +38,8 @@ class App extends Component {
         const diffWeeks = Math.ceil(diffDays / 7);
         // user.size = diffWeeks > 52 ? 1 : 52 - diffWeeks;
         // user.size = diffDays > 30 ? 1 : 30 - diffDays;
-        user.size = diffHours > 72 ? 1 : 72 - diffHours;
+        // user.size = diffHours > 240 ? 24 : 240 - diffHours;
+        user.size = diffHours > 96 ? 2 : 96 - diffHours;
         user.pic = user.avatar === 'null' ?  null : `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
       });
       this.setState({ users: result.data.DiscordUser });
