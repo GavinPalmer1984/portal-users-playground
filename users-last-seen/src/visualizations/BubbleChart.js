@@ -14,17 +14,22 @@ class BubbleChart extends Component {
         if (!nextProps.data || typeof nextProps.data.length === 'undefined') return null; // data hasn't been loaded yet so do nothing
 
         const data = nextProps.data;
-        const nodes = (d3.hierarchy({children: data})
+        const nodes = (d3.hierarchy({ children: data })
             .sum(d => d.size));
         const fn = pack(nodes).size([width, height]);
         const circles = fn(nodes).children.map((circle) => {
             let fill = '#17becf';
-            console.log(circle.r, circle);
+            if (circle.data.pic) {
+                // fill = `url('${circle.data.pic}')`;
+                fill = `url(#${circle.data.id})`;
+            }
             return {
+                id: circle.data.id,
                 x: circle.x,
                 y: circle.y,
                 r: circle.r,
-                fill: fill
+                fill: fill,
+                pic: circle.data.pic
             };
         });
 
@@ -41,6 +46,11 @@ class BubbleChart extends Component {
                 {this.state.circles.map((circle, i) =>
                     (
                         <g key={i} transform={`translate(${circle.x}, ${circle.y})`}>
+                            <defs>
+                                <pattern id={circle.id} x="0" y="0" width="1" height="1">
+                                    <image href={circle.pic} x="0" y="0" width={circle.r * 2} height={circle.r * 2}></image>
+                                </pattern>
+                            </defs>
                             <circle id={i} r={circle.r} fillOpacity={0.7} fill={circle.fill}></circle>
                         </g>
                     )
