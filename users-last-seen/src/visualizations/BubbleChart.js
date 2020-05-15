@@ -2,13 +2,24 @@ import React, { Component } from 'react';
 import * as d3 from 'd3';
 import { pack } from 'd3';
 
-const width = 650;
-const height = 400;
-
 class BubbleChart extends Component {
     state = {
-        circles: []
+        circles: [],
+        width: window.innerWidth,
+        height: window.innerHeight
     };
+
+    updateDimensions = () => {
+        console.log('update dimensions');
+        this.setState({ width: window.innerWidth, height: window.innerHeight });
+    };
+
+    componentDidMount() {
+        window.addEventListener('resize', this.updateDimensions);
+    }
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateDimensions);
+    }
 
     static getDerivedStateFromProps(nextProps, prevState) {
         if (!nextProps.data || typeof nextProps.data.length === 'undefined') return null; // data hasn't been loaded yet so do nothing
@@ -16,7 +27,7 @@ class BubbleChart extends Component {
         const data = nextProps.data;
         const nodes = (d3.hierarchy({ children: data })
             .sum(d => d.size));
-        const fn = pack(nodes).size([width, height]);
+        const fn = pack(nodes).size([prevState.width, prevState.height]);
         const circles = fn(nodes).children.map((circle) => {
             let fill = '#17becf';
             let text = <text textAnchor="middle"><tspan y="0.3em" fontSize="10px">{circle.data.username[0]}</tspan></text>;
@@ -44,7 +55,7 @@ class BubbleChart extends Component {
     render() {
 
         return (
-            <svg width={width} height={height}>
+            <svg width={this.state.width} height={this.state.height}>
                 {this.state.circles.map((circle, i) =>
                     (
                         <g key={i} transform={`translate(${circle.x}, ${circle.y})`}>

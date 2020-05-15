@@ -36,10 +36,9 @@ class App extends Component {
         const diffHours = Math.ceil(diffTime / (1000 * 60 * 60));
         const diffDays = Math.ceil(diffHours / 24);
         const diffWeeks = Math.ceil(diffDays / 7);
-        // user.size = diffWeeks > 52 ? 1 : 52 - diffWeeks;
-        // user.size = diffDays > 30 ? 1 : 30 - diffDays;
-        // user.size = diffHours > 240 ? 24 : 240 - diffHours;
-        user.size = diffHours > 96 ? 2 : 96 - diffHours;
+        // user.size = diffHours > (30 * 24) ? 4 : (30 * 24) - diffHours; // 30 days
+        // user.size = diffHours > (10 * 24) ? 4 : (10 * 24) - diffHours; // 10 days
+        user.size = diffHours > (5 * 24) ? 4 : (5 * 24) - diffHours; // 5 days
         user.pic = user.avatar === 'null' ?  null : `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
       });
       this.setState({ users: result.data.DiscordUser });
