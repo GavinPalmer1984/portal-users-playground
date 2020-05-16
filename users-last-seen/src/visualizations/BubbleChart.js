@@ -5,13 +5,11 @@ import { pack } from 'd3';
 class BubbleChart extends Component {
     state = {
         circles: [],
-        width: window.innerWidth,
-        height: window.innerHeight
+        width: window.innerWidth / 2,
+        height: window.innerWidth / 2
     };
-
     updateDimensions = () => {
-        console.log('update dimensions');
-        this.setState({ width: window.innerWidth, height: window.innerHeight });
+        this.setState({ width: window.innerWidth / 2, height: window.innerWidth / 2 });
     };
 
     componentDidMount() {
@@ -26,7 +24,8 @@ class BubbleChart extends Component {
 
         const data = nextProps.data;
         const nodes = (d3.hierarchy({ children: data })
-            .sum(d => d.size));
+            .sum(d => d.size)
+            .sort((a, b) => b.value - a.value));
         const fn = pack(nodes).size([prevState.width, prevState.height]);
         const circles = fn(nodes).children.map((circle) => {
             let fill = '#17becf';
@@ -42,7 +41,8 @@ class BubbleChart extends Component {
                 r: circle.r,
                 fill: fill,
                 pic: circle.data.pic,
-                text
+                text,
+                data: circle.data
             };
         });
 
@@ -50,6 +50,16 @@ class BubbleChart extends Component {
     }
 
     componentDidUpdate() {
+    }
+
+    mouseClick = (e) => {
+        console.log('click', this.state.circles[e.target.id].data);
+    }
+    mouseEnter = (e) => {
+        console.log('hover', this.state.circles[e.target.id].data);
+    }
+
+    mouseLeave = (e) => {
     }
 
     render() {
@@ -64,7 +74,7 @@ class BubbleChart extends Component {
                                     <image href={circle.pic} x="0" y="0" width={circle.r * 2} height={circle.r * 2}></image>
                                 </pattern>
                             </defs>
-                            <circle id={i} r={circle.r} fillOpacity={0.7} fill={circle.fill}></circle>
+                            <circle size={circle.size} id={i} r={circle.r} fillOpacity={0.7} fill={circle.fill} onClick={this.mouseClick} onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave}></circle>
                             {circle.text}
                         </g>
                     )
